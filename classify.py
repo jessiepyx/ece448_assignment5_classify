@@ -89,5 +89,21 @@ def classifyLR(train_set, train_labels, dev_set, learning_rate, max_iter):
     return dev_labels
 
 def classifyEC(train_set, train_labels, dev_set, k):
-    # Write your code here if you would like to attempt the extra credit
-    return []
+    # KNN
+    dev_labels = []
+    for idx in range(len(dev_set)):
+        neighbor_list = []
+        for i in range(k):
+            neighbor = 0
+            dist = np.inf
+            for j in range(len(train_set)):
+                if j not in neighbor_list:
+                    tmp_dist = np.linalg.norm(dev_set[idx, :] - train_set[j, :])
+                    if tmp_dist < dist:
+                        neighbor = j
+                        dist = tmp_dist
+            neighbor_list.append(neighbor)
+        vote = sum([train_labels[x] for x in neighbor_list]) / k
+        label = 0 if vote <= 0.5 else 1
+        dev_labels.append(label)
+    return dev_labels
